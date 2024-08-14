@@ -11,5 +11,6 @@ in pkgs.mkShell rec {
     npx hexo generate
     cp -r ./public /var/www/blog/
     chown -R www-data /var/www/blog/
+    exit
   '';
 }
