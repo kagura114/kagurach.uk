@@ -32,90 +32,90 @@ color_scheme:
   # 通用颜色
   common:
     # 主题色
-    theme: '#b2ebf2'
+    theme: "#b2ebf2"
     # 链接色
-    link: '#29b6f6'
+    link: "#29b6f6"
     # 按钮色
-    button: '#4dd0e1'
+    button: "#4dd0e1"
     # 鼠标放到交互元素上时的色
-    hover: '#0277bd'
+    hover: "#0277bd"
     # 主题色块内部的文字颜色
-    inner: '#fff'
+    inner: "#fff"
     # 选中区域文字的背景颜色
-    selection: 'alpha(#e1f5fe, 0.4)'
+    selection: "alpha(#e1f5fe, 0.4)"
   # ------------
   # 亮色主题（默认）
   light:
     # 网站背景色
-    site_bg: '#e1f5fe'
+    site_bg: "#e1f5fe"
     # 网站背景上的文字
-    site_inner: '#fff'
+    site_inner: "#fff"
     # 网站页脚文字
-    site_footer: '#666'
+    site_footer: "#666"
 
     # 卡片背景色
-    card: 'alpha(#fafafa, 0.7)'
+    card: "alpha(#fafafa, 0.7)"
     # 卡片上的普通文字
-    text: '#444'
+    text: "#444"
 
     # 区块和代码块背景色
-    block: '#fffde7'
+    block: "#fffde7"
     # 代码块高亮时的背景色
-    codeblock: 'alpha(#fff8e1,0.4)'
+    codeblock: "alpha(#fff8e1,0.4)"
     # 行内代码颜色
-    inlinecode: '#D56D28'
+    inlinecode: "#D56D28"
 
     # 文章部分
-    h1: '#444'
-    h2: '#444'
-    h3: '#444'
-    h4: '#444'
-    h5: '#444'
-    h6: '#444'
-    p: '#444'
+    h1: "#444"
+    h2: "#444"
+    h3: "#444"
+    h4: "#444"
+    h5: "#444"
+    h6: "#444"
+    p: "#444"
 
     # 列表文字
-    list: '#666'
+    list: "#666"
     # 列表 hover 时的文字
-    list_hl: 'mix($color-theme, #000, 80)'
+    list_hl: "mix($color-theme, #000, 80)"
     # 辅助性文字
-    meta: '#888'
+    meta: "#888"
   # ------------
   # 暗色主题
   dark:
     # 网站背景色
-    site_bg: '#222'
+    site_bg: "#222"
     # 网站背景上的文字
-    site_inner: '#eee'
+    site_inner: "#eee"
     # 网站页脚文字
-    site_footer: '#aaa'
+    site_footer: "#aaa"
     # 卡片背景色
-    card: '#444'
+    card: "#444"
     # 卡片上的普通文字
-    text: '#eee'
+    text: "#eee"
 
     # 区块和代码块背景色
-    block: '#3a3a3a'
+    block: "#3a3a3a"
     # 代码块高亮时的背景色
-    codeblock: '#343a3c'
+    codeblock: "#343a3c"
     # 行内代码颜色
-    inlinecode: '#D56D28'
+    inlinecode: "#D56D28"
 
     # 文章部分
-    h1: '#eee'
-    h2: '#eee'
-    h3: '#ddd'
-    h4: '#ddd'
-    h5: '#ddd'
-    h6: '#ddd'
-    p: '#bbb'
+    h1: "#eee"
+    h2: "#eee"
+    h3: "#ddd"
+    h4: "#ddd"
+    h5: "#ddd"
+    h6: "#ddd"
+    p: "#bbb"
 
     # 列表文字
-    list: '#aaa'
+    list: "#aaa"
     # 列表 hover 时的文字
-    list_hl: 'mix($color-theme, #fff, 80)'
+    list_hl: "mix($color-theme, #fff, 80)"
     # 辅助性文字
-    meta: '#888'
+    meta: "#888"
     # 夜间图片亮度
     brightness: 70%
 
@@ -166,9 +166,9 @@ article:
       # 版权声明组件 (for layout: post/docs)
       copyright:
         enable: true
-        permalink: '本文永久链接是：'
+        permalink: "本文永久链接是："
         content:
-          - '博客内容遵循 署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议'
+          - "博客内容遵循 署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议"
           - permalink
       # ----------------
       # 打赏组件 (for layout: post/docs)
@@ -190,20 +190,20 @@ article:
       # 文章创建日期
       date:
         icon: fas fa-calendar-alt
-        title: '发布于：'
-        format: 'll' # 日期格式 http://momentjs.com/docs/
+        title: "发布于："
+        format: "ll" # 日期格式 http://momentjs.com/docs/
       # 文章更新日期
       updated:
         icon: fas fa-edit
-        title: '更新于：'
-        format: 'll' # 日期格式 http://momentjs.com/docs/
+        title: "更新于："
+        format: "ll" # 日期格式 http://momentjs.com/docs/
       # 文章分类
       category:
         icon: fas fa-folder-open
       # 文章浏览计数
       counter:
         icon: fas fa-eye
-        unit: '次浏览'
+        unit: "次浏览"
       # 文章字数和阅读时长
       wordcount:
         icon_wordcount: fas fa-keyboard
@@ -214,7 +214,7 @@ article:
       # 分享
       share:
         - id: qrcode # 当id为qrcode时需要安装插件  npm i hexo-helper-qrcode
-          img: https://gcore.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/wechat.png
+          img: https://gcore.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qrcode.png
         - id: telegram
           img: https://gcore.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/telegram.png
 
@@ -269,8 +269,8 @@ sidebar:
       min_font: 14
       max_font: 24
       color: true
-      start_color: '#999'
-      end_color: '#555'
+      start_color: "#999"
+      end_color: "#555"
 
     # ---------------------------------------
     # qrcode widget
@@ -292,52 +292,60 @@ sidebar:
       type:
         article:
           enable: true
-          text: '文章数目：'
-          unit: '篇'
+          text: "文章数目："
+          unit: "篇"
         runtime:
           enable: true
-          data: '2024/08/09'    # 填写建站日期
-          text: '距离上次复活已运行时间：'
-          unit: '天'
+          data: "2024/08/09" # 填写建站日期
+          text: "距离上次复活已运行时间："
+          unit: "天"
         wordcount:
           enable: true
-          text: '本站总字数：'   # 需要启用 wordcount
-          unit: '字'
+          text: "本站总字数：" # 需要启用 wordcount
+          unit: "字"
         lastupd:
           enable: true
-          friendlyShow: true    # 更友好的时间显示
-          text: '最后活动时间：'
-          unit: '日'
+          friendlyShow: true # 更友好的时间显示
+          text: "最后活动时间："
+          unit: "日"
 
 custom_css:
   navbar:
     height: 64px
     width: auto # auto, max
     effect: [shadow, floatable, blur] # [shadow, floatable, blur]
-  
+
   scrollbar:
     size: 4px
     border: 2px
-    color: '#5BCEFA'
-    hover: '#F5A9B8'
+    color: "#5BCEFA"
+    hover: "#F5A9B8"
 
   fontfamily:
     codefont:
-      fontfamily: 'hack,monospace'
+      fontfamily: "hack,monospace"
 
 site_footer:
   # layout of footer: [aplayer, social, license, info, copyright]
-  layout: [license, info, copyright]
-  copyright: '[Copyright © Kagura](/)'
+  layout: [social, license, info, copyright]
+  social:
+    - icon: fas fa-envelope
+      url: mailto:me@kagurach.uk
+    - icon: fab fa-github
+      url: https://github.com/kagura114
+    - icon: fab fa-github
+      url: https://github.com/icewithcola
+    - icon: fab fa-telegram
+      url: http://kagurachu.t.me
+  copyright: "[Copyright © Kagura](/)"
   # You can add your own property here. (Support markdown, for example: br: '<br>')
-  br: '<br>'
-
+  br: "<br>"
 
 search:
   enable: true
-  service: hexo  # hexo
+  service: hexo # hexo
 
 comments:
-  title: 
+  title:
   subtitle:
-  service: 
+  service:
