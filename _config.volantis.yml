@@ -54,14 +54,14 @@ color_scheme:
     site_footer: '#666'
 
     # 卡片背景色
-    card: '#fff'
+    card: 'alpha(#fafafa, 0.7)'
     # 卡片上的普通文字
     text: '#444'
 
     # 区块和代码块背景色
     block: '#fffde7'
     # 代码块高亮时的背景色
-    codeblock: '#fff8e1'
+    codeblock: 'alpha(#fff8e1,0.4)'
     # 行内代码颜色
     inlinecode: '#D56D28'
 
@@ -230,7 +230,7 @@ sidebar:
     blogger:
       class: blogger
       display: [desktop, mobile] # [desktop, mobile]
-      avatar: static/avatar.jpg
+      avatar: https://kagurach.uk/static/avatar.jpg
       shape: circle # circle, rectangle
       url: /about/
       title: Kagura
