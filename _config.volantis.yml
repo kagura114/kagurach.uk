@@ -5,15 +5,22 @@ navbar:
     icon:
     title: Kagura's Blog
   menu:
-    - name: 标签
-      icon: fa-solid fa-tags
-      url: tags/
     - name: 归档
       icon: fa-solid fa-archive
       url: archives/
     - name: 友链
       icon: fa-solid fa-link
       url: friends/
+    - name: 服务
+      icon: fa-solid fa-server
+      rows:
+        - name: Kagura Git
+          url: https://git.kagurach.uk/
+        - name: Pixiv 公共代理
+          url: https://pixiv.lolicon.cyou/pid/120910319
+    # - name: 暗黑模式
+    #   icon: fas fa-moon
+    #   toggle: darkmode
     - name: 关于
       icon: fa-solid fa-info-circle
       url: about/
@@ -344,6 +351,9 @@ site_footer:
 search:
   enable: true
   service: hexo # hexo
+
+darkmode:
+    enable: true
 
 comments:
   title:
