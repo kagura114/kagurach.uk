@@ -66,7 +66,7 @@ color_scheme:
     text: "#444"
 
     # 区块和代码块背景色
-    block: "#fffde7"
+    block: "#faf8f4"
     # 代码块高亮时的背景色
     codeblock: "alpha(#fff8e1,0.4)"
     # 行内代码颜色
