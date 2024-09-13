@@ -10,6 +10,7 @@ in pkgs.mkShell rec {
     yarn install
     npx hexo generate
     echo "Visit: http://127.0.0.1:11451"
+    xdg-open http://127.0.0.1:11451
     caddy file-server --root public --listen :11451
   '';
 }

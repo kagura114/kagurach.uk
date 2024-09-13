@@ -3,7 +3,6 @@ let
 in pkgs.mkShell rec { 
   buildInputs = with pkgs; [
     yarn
-    caddy
     nodejs
   ];
   shellHook = ''
