@@ -38,6 +38,11 @@ export https_proxy=http://192.168.1.149:30080 http_proxy=http://192.168.1.149:30
 ```Powershell
 if (Get-NetConnectionProfile | Out-String | Select-String -Pattern "MashiroX" -CaseSensitive -SimpleMatch) { Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" ProxyEnable -Value 1 ; echo "Switched on"} else {  Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" ProxyEnable -Value 0; echo "Switched Off" }
 ```
+将上面的文件保存为`Proxy.ps1`，右键*使用Powershell运行*即可\
+如果 Windows 拒绝执行本地 Powershell 脚本，请在**管理员 Powershell** 下执行下面的内容
+```Powershell
+Set-Executionpolicy RemoteSigned
+```
 ---
 
 # 赞助
