@@ -43,6 +43,14 @@ if (Get-NetConnectionProfile | Out-String | Select-String -Pattern "MashiroX" -C
 ```Powershell
 Set-Executionpolicy RemoteSigned
 ```
+
+---
+# 测试
+From [ip.skk.moe](https://ip.skk.moe)
+<iframe src="https://ip.skk.moe/simple" style="width: 100%; border: 0"></iframe>
+<!-- 暗色模式 -->
+<iframe src="https://ip.skk.moe/simple-dark" style="width: 100%; border: 0"></iframe>
+
 ---
 
 # 赞助
