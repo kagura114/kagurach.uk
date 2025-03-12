@@ -1,6 +1,6 @@
 ---
 title: 用 Nix 管理安卓打包环境
-date: 2023/12/09 14:35
+date: 2025/03/12 12:35
 tags: ["Linux","开发","Nix"]
 category: 开发
 ---
