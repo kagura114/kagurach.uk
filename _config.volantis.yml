@@ -329,8 +329,11 @@ custom_css:
     hover: "#F5A9B8"
 
   fontfamily:
+    bodyfont:
+      fontfamily: "Arial, sans-serif"
     codefont:
       fontfamily: "hack,monospace"
+      url: "static/fonts/hack-regular.woff2"
 
 site_footer:
   # layout of footer: [aplayer, social, license, info, copyright]

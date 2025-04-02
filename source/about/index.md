@@ -9,10 +9,11 @@ Hi,我是Kagura
 
 - 大学生
 - 安卓开发
+- I use nix & arch btw
 - Kotlin/Java ❤️
 
 联系方式
-- [mail](mailto://me@kagurach.uk)
+- Mail to: me [at] kagurach.uk
 - [Telegram](https://kagurachu.t.me)
 
 PGP Key:
