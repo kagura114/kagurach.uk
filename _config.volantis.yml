@@ -332,8 +332,12 @@ custom_css:
     bodyfont:
       fontfamily: "Arial, sans-serif"
     codefont:
-      fontfamily: "hack,monospace"
-      url: "static/fonts/hack-regular.woff2"
+      fontfamily: "JetBrains Mono,hack,monospace"
+      name: 'JetBrains Mono'
+      url: "https://kagurach.uk/static/fonts/JetBrainsMono-Regular.woff2"
+      weight: normal
+      style: normal
+
 
 site_footer:
   # layout of footer: [aplayer, social, license, info, copyright]
