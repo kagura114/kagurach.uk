@@ -114,3 +114,41 @@ CFG Example:
 
 ##### Image End
 
+### Avaliable Expressions
+eg:
+```js
+var x = a+b
+var k
+if (a+b > k){...}
+```
+In this case, `a+b` has computed twice, `a+b` is aviliable on compare.  
+Also, value of `a+b` has not changed.  
+
+- use **immediately** after immediately
+- if used and each part is not redefined
+
+### Very Busy Expressions
+eg:
+```js
+var x,a,b
+x = input()
+a = x - 1
+b = x - 2
+
+while(x > 0){
+  output(a*b - x)
+  x -- 
+}
+output(a * b)
+```
+`a * b` has used many times and never changed, so `t = a * b` only need once  
+But may make register pressure greater.
+
+VBE: for expression `E` on time `p`
+- `E` is very bust if it computed before program terminates along any path from that point to the end
+
+`E` is VBE before `p` only if:
+- `E` if busy after time point `p` and no variable in `E` is redefined at `p`
+- or used at `p`
+
+### Reaching Definations
