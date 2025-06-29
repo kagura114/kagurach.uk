@@ -98,3 +98,14 @@ val json = mapToJson(jsonMap.asJsMapView())
 
 fun mapToJson(entries: JsMap<String, dynamic>): dynamic = js("Object.fromEntries(entries)")
 ```
+
+## 其他
+把鸿蒙的 `.d.ts` 快速换成 kotlin， 可以用下面的正则（不一定全），就是把 `->` 左边的换成右边的，都是一直换到没有可换，然后顺序执行。没有箭头就是不用换的意思，以 VSCode 的正则表达式为例。
+```
+[ ]*/\*.*\n([ ]*\*.*\n)*[ ]*/  -> /
+^[ ]*\* [ @<].*\n
+;$
+:[ ]*number -> Number
+^[ ]*([a-zA-Z]*): -> val $1:
+^[ ]*([a-zA-Z]*)\( -> fun $1(
+```
