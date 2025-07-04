@@ -312,6 +312,7 @@ public interface IAppOpsManagerExt {
 ```
 看来已经找到了 String 的表示法 `android:direction_sensors`，从这里就可以去查询我们是否被设置了6s
 
+<!--
 # 0x3 oplus-framework.jar
 但是要找这6s是如何实现的依然不简单，继续关注log
 ```
@@ -803,7 +804,7 @@ public void setSceneActionTransit(String scene, String action, int timeout) thro
 ```java
 // android.app.IOplusActivityManager
 public static final String DESCRIPTOR = "android.app.IOplusActivityManager";
-...
+```
 case 112: // 注：上面还有一个  return "setSceneActionTransit";
     String _arg093 = data.readString();
     String _arg158 = data.readString();
@@ -813,3 +814,7 @@ case 112: // 注：上面还有一个  return "setSceneActionTransit";
     return true;
 ```
 这都开始 RPC Call 了我是真找不到了就这样吧
+-->
+
+## 小米
+米系的逆向也不是太复杂，在小米自己的framework里，可以看到 opCode 10000~10051 被拼成了 `MIUI:$opCode` 的样子，所以可以直接通过遍历大法找到是哪个 opCode, ~~这个作为课后练习大家自己去看~~
