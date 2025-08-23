@@ -5,6 +5,11 @@ tags: ["安卓"]
 category: 安卓
 ---
 
+这里没什么，做一个记录
+
+<!-- more -->
+
+
 # 0x0 入手点
 可以看到有设置选项，尝试切换（以firefox nightly 为例, package name = `org.mozilla.fenix`）：
 ```

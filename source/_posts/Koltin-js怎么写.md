@@ -109,3 +109,20 @@ fun mapToJson(entries: JsMap<String, dynamic>): dynamic = js("Object.fromEntries
 ^[ ]*([a-zA-Z]*): -> val $1:
 ^[ ]*([a-zA-Z]*)\( -> fun $1(
 ```
+
+## 小坑
+### Long
+总所周知， JS 没有 64 bit Integer 这个东西，所以 Kotlin/JS 创造了下面的东西
+```ts
+class long {
+  high: number;
+  low: number;
+}
+```
+~~什么拼好 long~~ [https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript](https://kotlinlang.org/docs/js-to-kotlin-interop.html#kotlin-types-in-javascript)
+
+但就出现了一个问题，这个东西并没有被 export，所以在 `.d.ts` 中，看到的是
+```
+const x: any /* Long */
+```
+那传入 `number`，会因为缺少方法而爆炸（尤其是有人不知道这个特性）

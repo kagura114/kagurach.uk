@@ -5,11 +5,12 @@ bottom_meta: false
 sidebar: []
 ---
 
-Hi,我是Kagura
+Hi,我是 Kagura 🏳️‍⚧️
 
-- 大学生
-- 安卓开发
-- I use nix & arch btw
+- 大学生（目前还是）
+- 现在在做安卓开发
+- I use NixOS btw
+- I use Arch Linux btw (but nix as package manager)
 - Kotlin/Java ❤️
 
 联系方式
@@ -17,26 +18,9 @@ Hi,我是Kagura
 - [Telegram](https://kagurachu.t.me)
 
 PGP Key:
-```
------BEGIN PGP PUBLIC KEY BLOCK-----
+[f01a2af4257476a3020cb8705b6499b9489504f3](https://keyserver.ubuntu.com/pks/lookup?search=f01a2af4257476a3020cb8705b6499b9489504f3&fingerprint=on&op=index)
 
-mDMEZee9vBYJKwYBBAHaRw8BAQdA1MptJ3r+zh6787NvMAHgo0P8WTKqqiva5bxS
-VYMt7MG0F0thZ3VyYSA8bWVAa2FndXJhY2gudWs+iHgEExYIACAECwkIBwIVCAIW
-AQIZAQWCZee9vAKeAQKbAQWJAeL1FgAKCRBbZJm5SJUE8wpSAQDp5vcZ0ZvQpfdJ
-I2a90rA201fwR8UuQpgH7omtStn0RgEAsAUFfQXEIrMYMqJklFai1gKSp8R4h69S
-+QwTOC0v+Aa4MwRl5728FgkrBgEEAdpHDwEBB0AAw11QCpGhmzQYN3VE8qdmIt4L
-BaFY53eZy5ZvFKfMfojHBBgWCAAPBYJl58t1ApsCBYkB4wM4AGoJEFtkmblIlQTz
-X6AEGRYIAAYFAmXny3UACgkQtTeTpXjTklvbMwD7B68+Qgen+slDLtps1yO4eQkx
-qQhIQD04KOymddnrTmgA/0DgKKwPn0IboSJ86SAaX4en22EXuJItLjl3T09V5AYM
-qGgA/3ooMlbJEcpkrm1KMzt1A+p+75jP/7Ez9uL9aIg4kDvPAP4xDPSV+6zRIhAS
-8BiC9ebVuoQs3zMU13sYx9EpPIXYDbg4BGXnvbwSCisGAQQBl1UBBQEBB0AydTYg
-onMPcFPW1VFsM4CmUvqD2tksWL5yT0sVXmT6EgMBCAeIeAQYFggACQWCZee9vAKb
-DAAhCRBbZJm5SJUE8xYhBPAaKvQldHajAgy4cFtkmblIlQTz/BUA/2AgOqtctAyq
-elAzEdjGwhVCjdOvf/jpmboNF6Qb2K8SAQD+SoLv9T0VhE/OovDKjAXEyj4c8KWC
-oHSOFDEl3XlDB7gzBGXnvbwWCSsGAQQB2kcPAQEHQBhVI54mi0fWsdu3+C1+PKn5
-mwwCalXCdJZXuRqpLbGliH4EGBYIAA8FgmXnvbwCmyAFiQHi9UkAIQkQW2SZuUiV
-BPMWIQTwGir0JXR2owIMuHBbZJm5SJUE80ZNAP9HwAaErhjd4pi/Lf6WtBeirwxV
-vglXf+CSPyFayoDX0QEAzJsXbkmC6n28qj3zw4Tu5LhCsDK7WQx/0+5eE82EMQw=
-=pLYQ
------END PGP PUBLIC KEY BLOCK-----
-```
+DN42:
+- `AS 4242422323`
+- Region = `CN`
+- IPV6 only

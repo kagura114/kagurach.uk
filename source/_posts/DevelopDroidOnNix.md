@@ -70,6 +70,79 @@ nix flake 的 devShell 完全可以配置安卓打包环境，就是资料不是
 ```
 然后使用 `nix develop` 进入开发环境
 
+或者，可以使用另一种写法，这样可以锁定 `nixpkgs`
+```nix
+{
+  description = "bundle environment for hook101";
+
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  outputs =
+    inputs:
+    let
+      javaVersion = 21;
+
+      supportedSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+      forEachSupportedSystem =
+        f:
+        inputs.nixpkgs.lib.genAttrs supportedSystems (
+          system:
+          f {
+            pkgs = import inputs.nixpkgs {
+              inherit system;
+              overlays = [ inputs.self.overlays.default ];
+              config.allowUnfree = true;
+              config.android_sdk.accept_license = true;
+            };
+          }
+        );
+    in
+    {
+      overlays.default =
+        final: prev:
+        let
+          jdk = prev."jdk${toString javaVersion}";
+          androidComposition = prev.androidenv.composeAndroidPackages {
+            includeNDK = true;
+
+            # Uncommon for compiling
+            useGoogleAPIs = false;
+            useGoogleTVAddOns = false;
+            includeEmulator = false;
+            includeSystemImages = false;
+            includeSources = false;
+          };
+          androidSdk = androidComposition.androidsdk;
+        in
+        {
+          inherit jdk;
+          inherit androidSdk;
+          gradle = prev.gradle.override { java = jdk; };
+        };
+      devShells = forEachSupportedSystem (
+        { pkgs }:
+        {
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              jdk
+              androidSdk
+              gradle
+            ];
+
+            JAVA_HOME = pkgs.jdk;
+            ANDROID_HOME= "${pkgs.androidSdk}/libexec/android-sdk";
+          };
+        }
+      );
+    };
+}
+
+```
+
 # 变量
 变量要看你的 `build.gradle` 和 `flake.nix`， 一般我们让 flake 适配原来的 gradle script
 ```groovy
