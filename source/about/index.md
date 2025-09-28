@@ -13,6 +13,11 @@ Hi,我是 Kagura 🏳️‍⚧️
 - I use Arch Linux btw (but nix as package manager)
 - Kotlin/Java ❤️
 
+要不要来成为被选中的 ~~马猴烧酒~~ 🐧烧酒
+```
+同学你好，腾讯校园招聘启动，快复制我的内推串码  B8TGP0PU  ，登录官网(https://join.qq.com/index.html)粘贴并投递简历吧!
+```
+
 联系方式
 - Mail to: me [at] kagurach.uk
 - [Telegram](https://kagurachu.t.me)
