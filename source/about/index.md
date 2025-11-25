@@ -12,17 +12,26 @@ Hi,我是 Kagura 🏳️‍⚧️
 - I use nix/NixOS，另外在 Arch/MacOS 上用 nix 管理包难道不好吗
 - 喜欢写一点乱七八糟的小工具，做一些乱七八糟的东西
 
-联系方式
+### 联系方式
 - Mail to: me [at] kagurach.uk
 - [Telegram](https://kagurachu.t.me)
 
-PGP Key:
+### PGP Key:
 [f01a2af4257476a3020cb8705b6499b9489504f3](https://keyserver.ubuntu.com/pks/lookup?search=f01a2af4257476a3020cb8705b6499b9489504f3&fingerprint=on&op=index)
 
-DN42:
+### DN42（现在因为搬家后网络不稳定，暂时无法使用）:
 - `AS 4242422323`
 - Region = `CN` （确切来说就是上海）
 - IPV6 only （我没有公网 V4）
+
+### 业余无线电
+使用呼号 `BI9CWR`，泉盛 UV-K5，钻石 770 拉杆天线或钻石 770H 天线配吸盘底座
+
+虽然有短波天线但我自己只有A证玩不了。
+每晚看着划破天空的天线，就想到它带来了远方~~老朴、民乐和✨✨广播电台~~Ham的声音。
+![划破夜空的天线](../static/img/bio/nightsky.png)
+
+一般活跃在上海 AA 中继
 
 ## 广告
 要不要来成为被选中的 ~~马猴烧酒~~ 🐧烧酒
