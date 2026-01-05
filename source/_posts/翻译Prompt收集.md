@@ -4,8 +4,15 @@ date: 2022-12-29 11:45:00
 tags: ["AI"]
 category: "杂项"
 ---
-使用插件：[流畅阅读](https://github.com/Bistutu/FluentRead/fork)
 
+~~使用插件：[流畅阅读](https://github.com/Bistutu/FluentRead/)~~.  
+因为原插件不支持跳过较短内容等（在我的实际使用场景中，我只需要翻译哪些比较长的文本），所以现在我 Fork 了一份，删掉了我用不到的 API，添加了跳过较短内容的功能。  
+地址：[icewithcola/FluentRead](https://github.com/icewithcola/FluentRead/)  
+配置可以从原来的插件中复制。
+
+使用 `bun install` 安装依赖，然后使用 `bun zip` 打包，您可以安装 `.output/chrome-mv3` 目录下的文件到您的浏览器中。
+
+# Prompt
 默认都是翻译到简体中文
 
 |模型|System|User|
