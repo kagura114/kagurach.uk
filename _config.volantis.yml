@@ -265,7 +265,7 @@ sidebar:
       header:
         icon: fas fa-folder-open
         title: 文章分类
-        url: /blog/categories/
+        url: /
     # ---------------------------------------
     # tagcloud widget
     tagcloud:
@@ -274,7 +274,7 @@ sidebar:
       header:
         icon: fas fa-tags
         title: 热门标签
-        url: /blog/tags/
+        url: /
       min_font: 14
       max_font: 24
       color: true
