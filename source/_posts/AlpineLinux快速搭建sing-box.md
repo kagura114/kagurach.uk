@@ -13,8 +13,8 @@ category: 折腾
 ## 安装依赖
 首先先安装singbox,还有vim（方便编辑）  
 ```bash
-echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-apk add sing-box@testing
+echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+apk add sing-box
 apk add vim
 ```
 
@@ -79,6 +79,52 @@ service singbox start
   "route": {},
   "experimental": {}
 }
+```
+
+或者使用 hysteria2
+
+```json
+{
+  "log": {
+    "disabled": false,
+    "level": "info",
+    "output": "/root/box.log",
+    "timestamp": true
+  },
+  "dns": {},
+  "ntp": {},
+  "inbounds": [
+    {
+      "type": "hysteria2",
+      "listen": "::",
+      "listen_port": 47854,
+      "users": [
+        {
+          "name": "your user",
+          "password": "pAssw0rd"
+        }
+      ],
+      "obfs": {
+        "type": "salamander",
+        "password": "p_ass_world"
+      },
+      "tls": {
+        "enabled": true,
+        "server_name": "example.org",
+        "key_path": "/root/key.pem",
+        "certificate_path": "/root/certificate.pem"
+      }
+    }
+  ],
+  "outbounds": [],
+  "route": {},
+  "experimental": {}
+}
+```
+
+然后我们自签名一个证书
+```bash
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out certificate.pem -days 365 -nodes -subj "/CN=example.org"
 ```
 
 ---
