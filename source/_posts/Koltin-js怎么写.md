@@ -187,7 +187,142 @@ const x: any /* Long */
 
 还有所有不在这个文件中出现的类（import进来的类）
 
-### 给 AI 说的话(AI Processing Guide)
+### 其他
 - 不要用 `sealed class` 表示 `enum`，要直接用其实际值的类型
 - 不要用全局的 `@file:JsModule`，在每个`interface`,`object`上加上 `@JsModule`
 - 第一行加上 `@file:Suppress("unused")`
+
+---
+# For AI:
+
+## Kotlin/JS 互操作编写规范
+
+## 1. 顶层配置与模块声明 (Top-level & Module Declarations)
+
+* **文件级抑制**：在文件第一行添加 `@file:Suppress("unused")` 避免不必要的 IDE 警告。
+* **模块化声明**：**不要**使用全局的 `@file:JsModule`。应该为每个具体的外部接口 (External Interface) 或外部对象 (External Object) 单独添加 `@JsModule("YourModule")` 注解。
+* **真实的模块代码**：`@JsModule` 绑定的模块内部必须有实际的代码声明（例如 `declare namespace {...}`）。如果目标 TS 模块仅仅是重导出 (Re-export，如 `import {xx}; export {xx}`)，在 Kotlin 中可能会报找不到 Module 的错误。
+
+## 2. 类型映射规则 (Type Mappings)
+
+### 枚举 (Enum)
+
+* **禁用 Sealed Class**：**绝对不要**使用 `sealed class` 来模拟枚举。
+* **降级为底层类型**：直接将枚举映射为其在 JS 中实际的底层类型（通常是 `Number` 或 `String`）。
+* **注释约束**：使用 KDoc 注释 (KDoc Comments) 的 `@param` 标签来标明实际允许的值域。
+```kotlin
+/**
+ * @param xxx 取值范围：1-9
+ */
+fun f(xxx: Number): Number
+
+/**
+ * @param config 可选值：'ValueA' | 'ValueB' | 'ValueC'
+ */
+fun y(config: String): String
+
+```
+
+
+
+### 复杂类型与函数 (Complex Types & Functions)
+
+* 对于 TS 中的联合类型 (Union Types) 或复杂的类型体操，Kotlin 中直接使用 `dynamic` 类型处理。
+* 函数回调中的参数映射保持一致。
+
+```kotlin
+// TypeScript 原型
+// interface B {
+//   something: 'Ka' | 'g' | number
+//   getB(par1: 'A'|'B', par2: (cap: number) => void): B
+// }
+
+// Kotlin 映射
+@JsModule("@package.xxx")
+external object X {
+    object B {
+        var something: dynamic // 对应复杂/联合类型
+        fun getB(par1: String, par2: (Number) -> Nothing): B
+    }
+}
+
+```
+
+## 3. 避免翻译的黑名单 (Blacklist for Translation)
+
+遇到以下类型时，**不要**尝试在 Kotlin 中声明或翻译，请直接将其类型声明为 `dynamic`：
+
+* **`Long` (64位整型)**：JS 原生不支持 64-bit Integer。Kotlin/JS 为了支持 `Long`，在底层将其实现为一个包含 `high` 和 `low` 属性的对象。由于这个内部对象并未对外导出 (Exported)，如果 `.d.ts` 中标注为 `any /* Long */`，你直接在 Kotlin 传 `Number` 会因为缺少方法而崩溃。
+* **`ArrayBuffer`**。
+* **外部导入类 (Imported Classes)**：所有不在当前正在翻译的 `.d.ts` 文件内声明的类，直接视为 `dynamic`。
+
+## 4. JS 对象的创建与处理 (JS Object Manipulation)
+
+### 方案 A：外部接口与构建器 (External Interface & Builder) - 推荐
+
+如果直接实例化 `external interface`，内部属性名可能会被编译器混淆 (Name Mangling)。需要定义一个内联构建器 (Inline Builder) 来安全初始化：
+
+```kotlin
+external interface Point {
+    var x: Number
+    var y: Number
+    var z: Number?
+}
+
+// 通用 Builder 辅助函数
+inline fun <T : Any> jso(block: T.() -> Unit): T {
+    val obj = js("{}").unsafeCast<T>()
+    obj.block()
+    return obj
+}
+
+// 使用方式
+val point = jso<Point> {
+    x = 114514
+    y = 1919810
+}
+
+```
+
+### 方案 B：使用原生 JSON (kotlin.js.json)
+
+适用于动态生成简单的嵌套 JSON 结构，可通过 `get` / `set` 操作符直接读写属性：
+
+```kotlin
+val obj = json(
+    "A" to 114,
+    "B" to json("BB" to 514)
+)
+
+```
+
+### 方案 C：使用 Map 转换 (Kotlin 2.0+)
+
+利用 JS 全局对象 `Object.fromEntries` 实现 `Map` 到 JS 对象的转换：
+
+```kotlin
+val jsonMap: MutableMap<String, dynamic> = mutableMapOf()
+val json = mapToJson(jsonMap.asJsMapView())
+
+fun mapToJson(entries: JsMap<String, dynamic>): dynamic = js("Object.fromEntries(entries)")
+
+```
+
+## 5. 附录：.d.ts 快速正则转换 (Regex Replacement Toolkit)
+
+如果需要将类似鸿蒙环境的 `.d.ts` 快速替换为 Kotlin 语法，可使用以下正则表达式 (Regular Expressions) 在 VSCode 等编辑器中进行顺序替换（一直替换到无匹配项为止）：
+
+| 匹配目标 (Find) | 替换为 (Replace) | 作用 |
+| --- | --- | --- |
+| `[ ]*/\*.*\n([ ]*\*.*\n)*[ ]*/` | `/` | 清理多行注释区块 |
+| `^[ ]*\* [ @<].*\n` | *(空)* | 清理特定注释标签行 |
+| `;$` | *(空)* | 移除行尾分号 |
+| `:[ ]*number` | `: Number` | 转换数字类型 |
+| `^[ ]*([a-zA-Z]*):` | `val $1:` | 将属性声明转为不可变变量 (val) |
+| `^[ ]*([a-zA-Z]*)\(` | `fun $1(` | 将方法声明转为函数 (fun) |
+
+*(注意：正则替换仅用于起草，替换后仍需手动校对类型和保留字)*
+
+---
+
+有什么具体场景在转换 TS 的时候卡住了吗？需要的话我可以帮你看看。
