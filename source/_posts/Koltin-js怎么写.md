@@ -138,7 +138,7 @@ fun mapToJson(entries: JsMap<String, dynamic>): dynamic = js("Object.fromEntries
 ^[ ]*([a-zA-Z]*)\( -> fun $1(
 ```
 
-## external interface
+## Kotlin 中生成的 external interface
 external interface 是一个接口，它定义了一个类的成员，但不实现它们。如果你尝试实例化，里面的内容会被mangle掉，所以我们需要一系列 builder 来构造它。
 ```kotlin
 external interface Point {
@@ -157,10 +157,11 @@ inline fun <T : Any> jso(block: T.() -> Unit): T {
 ```
 用起来就是
 ```kotlin
-val point = jso<Point> {
+val point = jso {
     x = 114514
     y = 1919810
 }
+```
 
 ## 小坑
 ### Long
@@ -186,6 +187,7 @@ const x: any /* Long */
 
 还有所有不在这个文件中出现的类（import进来的类）
 
-### 给 AI 说的话
-- 不要用 `sealed class`，`file:JsModule` 里面只可以有 `external xxx`
+### 给 AI 说的话(AI Processing Guide)
+- 不要用 `sealed class` 表示 `enum`，要直接用其实际值的类型
+- 不要用全局的 `@file:JsModule`，在每个`interface`,`object`上加上 `@JsModule`
 - 第一行加上 `@file:Suppress("unused")`
