@@ -24,6 +24,34 @@ export {xx}
 ```
 否则会出现找不到 Module 的问题
 
+## Enum Class
+```ts
+declare enum E {
+  E1 = 114514
+}
+
+function f(xxx: E): E {...}
+```
+很明显，`f` 返回的其实就是 `Number`，转换为 Kotlin，需要直接指出 E 成员的真正type
+```kotlin
+@JsModule("YourModule")
+external object YourModule {
+  fun f(xxx: Number): Number
+}
+```
+### Enum 的注释
+在函数的注释中，加上 `* @param xxx 实际E可能的值`，例如
+```kotlin
+/**
+ * @param xxx 1-9
+ */
+fun f(xxx: Number): Number
+
+/**
+ * @param config 'ValueA'|'ValueB'|'ValueC'
+ */
+fun y(config: String): String
+```
 ## Mapping
 一个例子即可说完, 假设这里是 `@package.xxx`， 里面有
 ```ts
@@ -110,6 +138,30 @@ fun mapToJson(entries: JsMap<String, dynamic>): dynamic = js("Object.fromEntries
 ^[ ]*([a-zA-Z]*)\( -> fun $1(
 ```
 
+## external interface
+external interface 是一个接口，它定义了一个类的成员，但不实现它们。如果你尝试实例化，里面的内容会被mangle掉，所以我们需要一系列 builder 来构造它。
+```kotlin
+external interface Point {
+    var x: Number
+    var y: Number
+    var z: Number?
+}
+```
+则同时需要一个 builder，例如使用 jso
+```kotlin
+inline fun <T : Any> jso(block: T.() -> Unit): T {
+    val obj = js("{}").unsafeCast<T>()
+    obj.block()
+    return obj
+}
+```
+用起来就是
+```kotlin
+val point = jso<Point> {
+    x = 114514
+    y = 1919810
+}
+
 ## 小坑
 ### Long
 总所周知， JS 没有 64 bit Integer 这个东西，所以 Kotlin/JS 创造了下面的东西
@@ -126,3 +178,14 @@ class long {
 const x: any /* Long */
 ```
 那传入 `number`，会因为缺少方法而爆炸（尤其是有人不知道这个特性）
+
+### 不要去翻译的类
+有一些类一定要直接换为 `dynamic`
+- `Long`
+- `ArrayBuffer`
+
+还有所有不在这个文件中出现的类（import进来的类）
+
+### 给 AI 说的话
+- 不要用 `sealed class`，`file:JsModule` 里面只可以有 `external xxx`
+- 第一行加上 `@file:Suppress("unused")`
