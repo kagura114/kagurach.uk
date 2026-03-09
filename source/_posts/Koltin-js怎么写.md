@@ -52,7 +52,7 @@ fun f(xxx: Number): Number
  */
 fun y(config: String): String
 ```
-## Mapping
+## Type Mapping
 一个例子即可说完, 假设这里是 `@package.xxx`， 里面有
 ```ts
 declare type T = 'Ka' | 'g' | number
@@ -74,7 +74,15 @@ declare namespace X {
 external object X {
   val A: Number
   object B {
-    var something: dynamic // 复杂类型
+    /*
+     * valid values: 'Ka' | 'g' or type = number
+     */
+    var something: dynamic // (这是string, number的最小交集)
+    /*
+     * ...
+     * @param par1 valid values: '类型体操'|'没想到吧'|'但都是string'
+     * ...
+     */
     fun getB(par1: String, par2: (Number)->Nothing): B
   }
   sealed class E {
@@ -178,12 +186,13 @@ class long {
 ```
 const x: any /* Long */
 ```
-那传入 `number`，会因为缺少方法而爆炸（尤其是有人不知道这个特性）
+那在 js 侧传入 `number`，会因为缺少方法而出现问题，所以这里正确的写法就是生成一个 `any`
 
 ### 不要去翻译的类
 有一些类一定要直接换为 `dynamic`
 - `Long`
-- `ArrayBuffer`
+- `ArrayBuffer` (尤其是不要去 import 各种来源的 `ArrayBuffer`)
+- 其他不是 kotlin.js 中的类型
 
 还有所有不在这个文件中出现的类（import进来的类）
 
