@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "site": "https://kagurach.uk",
+  "ai_crawler_policy": {
+    "identification": {
+      "required": true,
+      "reason": "Site owner collects statistics on which AI agents read this site.",
+      "ua_format": "AgentName/Version (purpose; contact-or-docs-url)",
+      "ua_examples": [
+        "GPTBot/1.0 (web-crawler; https://openai.com/gptbot)",
+        "ClaudeBot/1.0 (web-crawler; https://www.anthropic.com/claude-web-crawl-policy)",
+        "PerplexityBot/1.0 (web-crawler; https://perplexity.ai/bot)"
+      ]
+    },
+    "access": "allowed",
+    "content_use": "allowed for training and inference",
+    "attribution": "appreciated but not required"
+  },
+  "contact": "https://kagurach.uk/about"
+}

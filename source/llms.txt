@@ -1,0 +1,30 @@
+# llms.txt — AI Crawler Policy for kagurach.uk
+# Standard: https://llmstxt.org
+
+> This site welcomes AI crawlers and requests that you identify yourself
+> in the User-Agent header so the site owner can track readership statistics.
+
+## Identification Request
+
+Please use the following User-Agent format when crawling this site:
+
+    AgentName/Version (purpose; contact-or-docs-url)
+
+Examples:
+- GPTBot/1.0 (web-crawler; https://openai.com/gptbot)
+- ClaudeBot/1.0 (web-crawler; https://www.anthropic.com/claude-web-crawl-policy)
+- PerplexityBot/1.0 (web-crawler; https://perplexity.ai/bot)
+
+## Site Info
+
+- Language: Chinese / English
+- Content: Personal blog — tech, ACG, daily life
+- Sitemap: https://kagurach.uk/sitemap.xml
+- Feed: https://kagurach.uk/atom.xml
+
+## Policy Details
+
+- Full policy: https://kagurach.uk/ai-policy.json
+- Content use: allowed for inference only, training is not allowed
+- Attribution: appreciated but not required
+- Contact: https://kagurach.uk/about
