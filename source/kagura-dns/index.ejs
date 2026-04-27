@@ -1,0 +1,175 @@
+---
+title: Kagura DNS
+seo_title: Kagura DNS
+description: Kagura DNS 在线调试页面，支持 DNS over HTTPS 查询、节点测速与原始响应查看
+layout: docs
+top_meta: false
+bottom_meta: false
+sidebar: []
+comments: false
+---
+
+<style>
+@import url('../static/kagura-dns/style.css');
+</style>
+
+<div class="kagura-dns" data-kagura-dns-root>
+  <section class="kagura-dns__hero">
+    <div class="kagura-dns__hero-copy">
+      <p class="kagura-dns__eyebrow">DoH 在线调试</p>
+      <p class="kagura-dns__lead">通过 Kagura 的 DNS over HTTPS 节点查询常见记录，页面会先自动测速，再优先选择更快的可用节点。</p>
+    </div>
+    <div class="kagura-dns__hero-meta">
+      <div class="kagura-dns__hero-badge">
+        <i class="fa-solid fa-route" aria-hidden="true"></i>
+        <span>自动切换节点</span>
+      </div>
+      <div class="kagura-dns__hero-badge">
+        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+        <span>DNS over HTTPS</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="kagura-dns__panel">
+    <div class="kagura-dns__controls">
+      <label class="kagura-dns__field">
+        <span class="kagura-dns__label"><i class="fa-solid fa-globe" aria-hidden="true"></i>域名</span>
+        <input type="text" data-role="domain-input" placeholder="例如：example.com" autocomplete="off">
+      </label>
+      <label class="kagura-dns__field kagura-dns__field--compact">
+        <span class="kagura-dns__label"><i class="fa-solid fa-list" aria-hidden="true"></i>记录类型</span>
+        <select data-role="record-type">
+          <option value="A">A - IPv4 地址</option>
+          <option value="AAAA">AAAA - IPv6 地址</option>
+          <option value="CNAME">CNAME - 别名</option>
+          <option value="MX">MX - 邮件交换</option>
+          <option value="NS">NS - 域名服务器</option>
+          <option value="TXT">TXT - 文本记录</option>
+          <option value="SOA">SOA - 起始授权</option>
+          <option value="SRV">SRV - 服务记录</option>
+          <option value="PTR">PTR - 反向解析</option>
+          <option value="CAA">CAA - 证书授权</option>
+          <option value="DS">DS - 委托签名</option>
+          <option value="DNSKEY">DNSKEY - DNS 密钥</option>
+          <option value="RRSIG">RRSIG - 记录签名</option>
+          <option value="NSEC3">NSEC3 - 安全否定存在</option>
+          <option value="HTTPS">HTTPS - HTTPS 绑定</option>
+          <option value="SVCB">SVCB - 服务绑定</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="kagura-dns__actions">
+      <button type="button" class="kagura-dns__button" data-role="query-btn">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <span>查询</span>
+      </button>
+
+      <div class="kagura-dns__status is-testing" data-role="server-status">
+        <span><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>正在测速选择最优服务器...</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="kagura-dns__loading is-hidden" data-role="loading">
+    <div class="kagura-dns__spinner" aria-hidden="true"></div>
+    <p>正在查询中...</p>
+  </div>
+
+  <div class="kagura-dns__error is-hidden" data-role="error-box">
+    <div class="kagura-dns__error-title">
+      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+      <span>查询失败</span>
+    </div>
+    <p data-role="error-message"></p>
+  </div>
+
+  <section class="kagura-dns__result is-hidden" data-role="result-section">
+    <div class="kagura-dns__summary">
+      <div class="kagura-dns__summary-grid">
+        <span class="kagura-dns__meta-pill">
+          <i class="fa-solid fa-globe" aria-hidden="true"></i>
+          <strong data-role="result-domain"></strong>
+        </span>
+        <span class="kagura-dns__meta-pill">
+          <i class="fa-solid fa-list" aria-hidden="true"></i>
+          <strong data-role="result-type"></strong>
+        </span>
+        <span class="kagura-dns__meta-pill">
+          <i class="fa-solid fa-stopwatch" aria-hidden="true"></i>
+          <strong data-role="result-time"></strong>
+        </span>
+        <span class="kagura-dns__meta-pill">
+          <i class="fa-solid fa-database" aria-hidden="true"></i>
+          <strong data-role="result-count"></strong>
+        </span>
+      </div>
+      <span class="kagura-dns__status-pill" data-role="result-status"></span>
+    </div>
+
+    <div class="kagura-dns__table-card">
+      <div class="kagura-dns__section-head kagura-dns__section-head--space-between">
+        <div>
+          <h2>查询结果</h2>
+          <p>展示 Answer 与 Authority 段的合并结果。</p>
+        </div>
+        <button type="button" class="kagura-dns__ghost-button" data-role="copy-btn">
+          <i class="fa-regular fa-copy" aria-hidden="true"></i>
+          <span>复制</span>
+        </button>
+      </div>
+
+      <div class="kagura-dns__table-wrap">
+        <table class="kagura-dns__table">
+          <thead>
+            <tr>
+              <th>名称</th>
+              <th>类型</th>
+              <th>TTL</th>
+              <th>值</th>
+            </tr>
+          </thead>
+          <tbody data-role="result-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <details class="kagura-dns__raw-card">
+      <summary>
+        <span class="kagura-dns__summary-label">
+          <i class="fa-solid fa-code" aria-hidden="true"></i>
+          原始 JSON 响应
+        </span>
+        <span class="kagura-dns__details-arrow">
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </span>
+      </summary>
+      <pre data-role="raw-response"></pre>
+    </details>
+  </section>
+
+  <section class="kagura-dns__endpoints-card" data-role="endpoints-section">
+    <div class="kagura-dns__section-head">
+      <div>
+        <h2>DoH 节点地址</h2>
+        <p>可将以下地址填入支持 DNS over HTTPS 的客户端或系统设置中。</p>
+      </div>
+    </div>
+    <div class="kagura-dns__endpoints-list" data-role="endpoints-list"></div>
+  </section>
+
+  <section class="kagura-dns__types" data-role="info-section">
+    <div class="kagura-dns__section-head">
+      <div>
+        <h2>常见记录类型</h2>
+        <p>点击卡片可以直接切换查询类型。</p>
+      </div>
+    </div>
+    <div class="kagura-dns__type-grid" data-role="record-type-cards"></div>
+  </section>
+
+  <div class="kagura-dns__toast" data-role="toast" aria-live="polite"></div>
+</div>
+
+<script data-pjax src="../static/kagura-dns/app.js"></script>

@@ -16,6 +16,8 @@ navbar:
       rows:
         - name: QSL 发卡记录
           url: qsl/
+        - name: Kagura DNS
+          url: kagura-dns/
         - name: Kagura Git
           url: https://git.kagurach.uk/
     # - name: 暗黑模式
