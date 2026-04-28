@@ -19,8 +19,6 @@ AI 翻译网页
 # Prompt
 默认都是翻译到简体中文
 
-|模型|System|User|
-|---|---|---|
 ## DeepSeek-V3
 ### System
 ```
