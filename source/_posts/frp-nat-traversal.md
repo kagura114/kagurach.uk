@@ -1,8 +1,8 @@
 ---
 title: frp内网穿透
-date: 2024-09-02 12:34:54
-tags: ["网络","Linux"]
-category: "折腾"
+date: 2024/09/02 12:34
+tags: ["网络", "Linux"]
+category: 折腾
 ---
 
 用 frp 将内网暴露到公网

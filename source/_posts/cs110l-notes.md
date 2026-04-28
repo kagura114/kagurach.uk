@@ -1,8 +1,8 @@
 ---
 title: CS110L 笔记
-date: 2024-11-24 23:34:00
+date: 2024/11/24 23:34
 tags: ["学习笔记"]
-category: "学习笔记"
+category: 学习笔记
 ---
 
 Some Learning Notes of [CS110L](https://reberhardt.com/cs110l/spring-2020/), based on course in 2020 spring that provides video as well as slides.

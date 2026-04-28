@@ -1,7 +1,8 @@
 ---
 title: Kagura's Block List
-date: 2026-04-10 22:13:19
-tags: [ "Linux" ]
+date: 2026/04/10 22:13
+tags: ["Linux"]
+category: 折腾
 ---
 
 被屏蔽的 IP， ASN 等

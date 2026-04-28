@@ -1,8 +1,8 @@
 ---
 title: Kotlin/JS 怎么写
-date: 2025/06/01 9:10
+date: 2025/06/01 09:10
 tags: ["Kotlin", "开发"]
-category:
+category: 开发
 ---
 
 在 Kotlin 里面引用 TypeScript 函数，然后还有一些其他常用的东西

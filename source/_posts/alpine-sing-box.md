@@ -1,7 +1,7 @@
 ---
 title: Alpine Linux 搭建 sing-box
 date: 2024/01/15 10:36
-tags: ["sing-box","网络","Linux"]
+tags: ["sing-box", "网络", "Linux"]
 category: 折腾
 ---
 

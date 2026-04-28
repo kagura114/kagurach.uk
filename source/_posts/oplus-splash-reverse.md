@@ -1,8 +1,8 @@
 ---
 title: OP手机开屏6s逆向
 date: 2025/06/27 10:36
-tags: ["安卓"]
-category: 安卓
+tags: ["Android"]
+category: Android
 ---
 
 这里没什么，做一个记录

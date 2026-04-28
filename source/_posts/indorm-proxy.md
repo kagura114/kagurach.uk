@@ -1,7 +1,8 @@
 ---
 title: Indorm Proxy 说明
-date: 2024-10-23 22:13:19
-tags: [ "啊？" ]
+date: 2024/10/23 22:13
+tags: ["网络"]
+category: 折腾
 ---
 
 给室友的一些小玩意

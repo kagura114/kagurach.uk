@@ -1,8 +1,8 @@
 ---
 title: AI翻译Prompt收集
-date: 2025-12-29 11:45:00
+date: 2025/12/29 11:45
 tags: ["AI"]
-category: "杂项"
+category: 杂项
 ---
 
 AI 翻译网页

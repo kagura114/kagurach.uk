@@ -1,8 +1,8 @@
 ---
 title: Bomblab Writeup
-date: 2024/05/07 9:30
-tags: ["学校课程","Linux"]
-category:
+date: 2024/05/07 09:30
+tags: ["学校课程", "Linux"]
+category: 学习笔记
 ---
 
 Bomblab 的一些做法等
