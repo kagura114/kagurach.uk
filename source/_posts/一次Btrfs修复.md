@@ -21,10 +21,20 @@ WARNING: CPU: 2 PID: 1408 at fs/btrfs/extent-tree.c:2191 btrfs_run_delayed_refs.
 看到这些，我就心中一愣，知道是文件系统爆炸了
 
 # 备份
-呃我没有别的盘了，这里如果是还能读取的话**赶快备份**
+Absolutely Fact: **备份很重要**，而且备份不要备份到同一个盘上。
 
 # 查错
-## **如果有硬件问题，越修你的数据只会死的越快！！**
+找到哪里有问题，可以帮你避免再次出现问题。但很可惜的是，大多数 btrfs 错误是由硬件故障导致的。
+
+常见的错误原因有：
+  - 内存错误（一般会导致比特翻转，理论上你可以自行计算出来是否是出现了比特翻转而导致 csum 错误）
+  - 盘本身的问题
+  - kernel 的 btrfs bug，但在 6.10 之后就较为少见了
+
+## 内存问题
+`memtest` 等一系列工具可以帮你找到问题
+
+## 盘问题
 `smartctl` 由 `smartmontools` 提供
 ```
 sudo smartctl -a /dev/nvme1n1
@@ -52,8 +62,11 @@ Error Information Log Entries:      1,141 <- 这个没啥用
 ```
 如果你实在看不懂，[ChatGPT](https://chatgpt.com) 可以帮你解读的。（但是可能会给你出昏招）
 
-## btrfs scrub
-`scrub` 是 btrfs 里一个较为无害的操作，基本不会让你的数据消失，要求要挂载上才可以进行操作
+## 其他乱七八糟问题导致的错误
+`scrub` 是 btrfs 里一个较为无害的操作，基本不会让你的数据消失，要求要挂载上才可以进行操作。
+
+> [Arch Linux](https://wiki.archlinux.org/title/Btrfs#Start_with_a_service_or_timer), [NixOS](https://search.nixos.org/options?channel=unstable&include_modular_service_options=1&include_nixos_options=1&query=services.btrfs.autoScrub) 都提供了 btrfs 定期 scrub的功能，你可以自行搜索相关功能，实现定时 scrub
+
 ```
 sudo btrfs scrub status /
 UUID:             035944f3-41a6-4007-a447-5b66ed05f34d
@@ -67,12 +80,16 @@ Error summary:    csum=1 <- Error
   Uncorrectable:  1
   Unverified:     0
 ```
-此时其实 `dmesg` 也会打出东西，例如  
-`BTRFS error (device dm-0): unable to fixup (regular) error at logical 1074845908992 on dev /dev/mapper/root physical 347931082752`  
-不过对我这各来说，Uncorrectable Error = 1，这下麻烦大了
+此时其实 `dmesg` 也会打出东西，例如  `BTRFS error (device dm-0): unable to fixup (regular) error at logical 1074845908992 on dev /dev/mapper/root physical 347931082752`
+
+对于这样的错误，有两种选择
+- 找的到文件，你可以把文件删了，读不到就不会有错
+- 找不到文件，那就坏了
 
 # 修复（LiveCD）中
-## 绝对要在 LiveCD 里面修，而且镜像越新越好
+**绝对要在 LiveCD 里面修，而且镜像越新越好（防止 btrfs 相关程序不匹配再给你炸了）**
+推荐使用 Arch Live CD，带 btrfs 相关工具
+
 ## 解密
 我开了 Luks，所以要先解密
 ```bash
@@ -116,20 +133,26 @@ btree space waste bytes: 740603716
 file data blocks allocated: 12058437595136
  referenced 660959006720
 ```
-看上去一点也不好啊，现在得大修了
-# 特别危险，数据会丢失！！！
-# 如果提示你可以用force参数千万别用，老实umount掉
+这样的话基本不可能不使用一些 **危险（真的）** 的命令： `# btrfs check --repair`
+
+btrfs repair 就是用来修复上面部分错误的命令。这个命令的执行结果可能是
+- 成功修复
+- intent tree 直接消失
+- tree root 消失，没办法挂载，甚至连修复命令都跑不起来
+
+命令如下：
 ```
-sudo btrfs check --repair 你解密好的盘
+# sudo btrfs check --repair 你解密好的盘
 ```
-# 让你看十秒的意思是可能让你的数据永远消失（建议搜索此命令受害者有多少）
 
 ## 结尾
 这次运气好，跑完以后错误都修复好了，皆大欢喜
 
-# 树死了😇
-如果你不幸用了 `--repair` 以后文件系统升天，树根结点报错（大概率跑的时候爆了很多东西，别停，停了死的更快），如果是树死了，其实也有办法  
-## 首先我能解决树死了是这样的
+# 最坏的情况：树死了😇
+如果你不幸用了 `--repair` 以后文件系统升天，树根结点报错，其实也有办法（如果有备份的话建议不要用这个方法，这个办法伤盘还不一定有用）
+
+## 首先：明确问题
+我目前遇到的是这样的问题
 ```
 btrfs check /dev/xxx
 Opening filesystem to check...
@@ -140,17 +163,24 @@ ERROR: failed to read block groups: Input/output error
 ERROR: cannot open file system
 ```
 mount 的 dmesg 直接报 `open_ctree failed`
-## n板斧
+
+## super-recover 大家族
+btrfs 提供一系列 rescue 命令，部分版本的 rescue 命令和下面的不一致，请自行阅读搜索
+
 ```
 btrfs rescue super-recover
 btrfs zero-log super-recover
 btrfs chunk-recover super-recover
 ```
+
 您可以自行搜索每一条的意思，然后决定是否使用
-## 大杀器
-重建树
+
+## 重建树
+如果上面的都没办法解决 **树根结点** 的问题，那么可以尝试重建树
+
+如果你只是数据损坏，请不要用这个方法，可能会导致数据丢失
+
 ```
 btrfs check --init-extent-tree
 ```
-600G数据差不多要10小时，NVME SSD  
-最后这个修好了
+速度大约为 60GB/h，使用 12C96G 的机器
