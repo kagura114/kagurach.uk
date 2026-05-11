@@ -1,0 +1,293 @@
+---
+title: Tokenizer 可视化
+seo_title: Tokenizer 词表 ID 可视化
+description: 加载 HuggingFace tokenizer.json，查看词元与 ID 映射、BPE 合并规则和统计信息
+layout: docs
+top_meta: false
+bottom_meta: false
+sidebar: false
+comments: false
+---
+
+<style>
+@import url('../static/tokenizer-viewer/style.css');
+</style>
+
+<div class="tokenizer-viewer-page">
+  <div class="tokenizer-viewer">
+    <section class="tokenizer-viewer__hero">
+      <div class="tokenizer-viewer__hero-copy">
+        <p class="tokenizer-viewer__eyebrow">Tokenizer 检视器</p>
+        <h1>Tokenizer 词表 ID 可视化</h1>
+        <p class="tokenizer-viewer__lead">加载 HuggingFace <code>tokenizer.json</code>，在一个更清爽的界面里查看词表 ID、解码结果、合并规则和分布图表。</p>
+      </div>
+      <div class="tokenizer-viewer__hero-meta">
+        <div class="tokenizer-viewer__hero-badge">
+          <i class="fa-solid fa-file-arrow-up" aria-hidden="true"></i>
+          <span>支持拖入本地 tokenizer 文件，也可以直接从远程地址读取。</span>
+        </div>
+        <div class="tokenizer-viewer__hero-badge">
+          <i class="fa-solid fa-diagram-project" aria-hidden="true"></i>
+          <span>并排对比原始词元、解码结果、ID 和合并优先级。</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tokenizer-viewer__panel">
+      <div class="tokenizer-viewer__panel-head">
+        <div>
+          <p class="tokenizer-viewer__section-kicker">加载来源</p>
+          <h2>导入 tokenizer JSON</h2>
+        </div>
+        <p class="tokenizer-viewer__panel-note">解析和可视化都在浏览器内完成。你可以直接使用下面的示例地址，也可以替换成自己的 tokenizer 导出文件。</p>
+      </div>
+
+      <div class="load-section">
+        <div class="drop-zone" id="dropZone">
+          <div class="drop-zone-icon"><i class="fa-regular fa-folder-open" aria-hidden="true"></i></div>
+          <div class="drop-zone-title">将 <code>tokenizer.json</code> 拖到这里</div>
+          <div class="drop-zone-text">或者点击从本机选择文件</div>
+          <input type="file" id="fileInput" accept=".json" hidden>
+        </div>
+
+        <div class="url-input-group">
+          <div class="preset-buttons">
+            <span class="preset-buttons__label">快速选择:</span>
+            <button class="btn-preset" data-url="https://huggingface.co/tencent/Hy3-preview/raw/main/tokenizer.json">Tencent Hy3</button>
+            <button class="btn-preset" data-url="https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/raw/main/tokenizer.json">DeepSeek V4 Pro</button>
+            <button class="btn-preset" data-url="https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/raw/main/tokenizer.json">DeepSeek V4 Flash</button>
+          </div>
+          <label class="tokenizer-viewer__field">
+            <span class="tokenizer-viewer__field-label"><i class="fa-solid fa-link" aria-hidden="true"></i>远程地址</span>
+            <input type="text" id="urlInput" placeholder="https://huggingface.co/.../tokenizer.json">
+          </label>
+          <button class="btn btn-primary" id="loadUrlBtn">
+            <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i>
+            <span>加载 URL</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="export-bar hidden" id="exportBar">
+      <span class="export-bar__label">导出解码后或原始词表映射</span>
+      <div class="export-bar__actions">
+        <button class="btn btn-secondary" id="copyJsonBtn">
+          <i class="fa-regular fa-copy" aria-hidden="true"></i>
+          <span>复制解码后 JSON</span>
+        </button>
+        <button class="btn btn-secondary" id="exportRawJsonBtn">
+          <i class="fa-solid fa-download" aria-hidden="true"></i>
+          <span>导出原始 JSON</span>
+        </button>
+        <button class="btn btn-primary" id="exportJsonBtn">
+          <i class="fa-solid fa-file-export" aria-hidden="true"></i>
+          <span>导出解码后 JSON</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="loading hidden" id="loadingState">
+      <div class="state-card">
+        <div class="spinner"></div>
+        <h2>正在加载 tokenizer 数据</h2>
+        <p>正在解析词表条目、特殊词元和合并规则。</p>
+      </div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="state-card">
+        <div class="empty-icon"><i class="fa-solid fa-wave-square" aria-hidden="true"></i></div>
+        <h2>还没有加载任何内容</h2>
+        <p>可以先使用上方示例 URL，或者拖入你自己的 tokenizer 文件来查看 ID、合并规则和解码结果。</p>
+      </div>
+    </div>
+
+    <div class="hidden" id="contentArea">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-label">词元总数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statSpecial">0</div>
+          <div class="stat-label">特殊词元</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statNormal">0</div>
+          <div class="stat-label">普通词元</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statIdRange">-</div>
+          <div class="stat-label">ID 范围</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statAvgLen">0</div>
+          <div class="stat-label">平均词元长度</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statMedianLen">0</div>
+          <div class="stat-label">词元长度中位数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statMerges">0</div>
+          <div class="stat-label">合并规则数</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="vocab">词表表格</button>
+        <button class="tab" data-tab="merges">合并规则 <span class="tab-badge hidden" id="mergesBadge">0</span></button>
+      </div>
+
+      <div class="tab-content active" id="tabVocab">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>词元长度分布</h3>
+            <canvas id="lengthChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>词元分类</h3>
+            <canvas id="categoryChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>ID 分布</h3>
+            <p class="chart-hint" id="idGapHint">ID 连续性检测中...</p>
+            <canvas id="idChart"></canvas>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="search-input" id="searchInput" placeholder="搜索原始词元或解码结果...">
+          <label>
+            <input type="checkbox" id="regexToggle"> 正则
+          </label>
+          <select id="typeFilter">
+            <option value="all">全部类型</option>
+            <option value="special">仅特殊词元</option>
+            <option value="normal">仅普通词元</option>
+          </select>
+          <div class="id-range-group">
+            <span class="filter-label">ID</span>
+            <input type="number" id="idMin" placeholder="最小值">
+            <span class="range-separator">-</span>
+            <input type="number" id="idMax" placeholder="最大值">
+          </div>
+          <select id="lengthFilter">
+            <option value="all">任意长度</option>
+            <option value="1">长度 = 1</option>
+            <option value="2-3">长度 2-3</option>
+            <option value="4-8">长度 4-8</option>
+            <option value="9+">长度 9+</option>
+          </select>
+        </div>
+
+        <div class="table-container">
+          <div class="table-info" id="tableInfo">显示 0 个词元</div>
+          <div class="table-scroll">
+            <table>
+              <colgroup>
+                <col class="col-index">
+                <col class="col-token">
+                <col class="col-decoded">
+                <col class="col-id">
+                <col class="col-type">
+                <col class="col-length">
+                <col class="col-action">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th data-sort="index"># <span class="sort-arrow">↕</span></th>
+                  <th data-sort="token">原始词元 <span class="sort-arrow">↕</span></th>
+                  <th data-sort="decoded">解码结果（可读） <span class="sort-arrow">↕</span></th>
+                  <th data-sort="id">ID <span class="sort-arrow">↕</span></th>
+                  <th data-sort="type">类型 <span class="sort-arrow">↕</span></th>
+                  <th data-sort="length">长度 <span class="sort-arrow">↕</span></th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="tokenTableBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="page-info" id="pageInfo">第 1 页，共 1 页</div>
+            <div class="pagination__actions">
+              <select class="page-size-select" id="pageSizeSelect">
+                <option value="50">50 条 / 页</option>
+                <option value="100" selected>100 条 / 页</option>
+                <option value="500">500 条 / 页</option>
+                <option value="1000">1000 条 / 页</option>
+                <option value="inf">无限滚动</option>
+              </select>
+              <div class="page-controls" id="pageControls"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tabMerges">
+        <div class="merges-header">
+          <p class="merges-description">BPE 合并规则定义了子词如何被组合。<strong>#1</strong> 表示最高优先级。每一行都会展示 <strong>左侧 + 右侧 → 合并结果</strong>，并附带可读的解码结果。</p>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="search-input" id="mergesSearchInput" placeholder="搜索原始或解码后的合并规则...">
+          <label>
+            <input type="checkbox" id="mergesRegexToggle"> 正则
+          </label>
+          <div class="id-range-group">
+            <span class="filter-label">优先级</span>
+            <input type="number" id="mergesRankMin" placeholder="最小值">
+            <span class="range-separator">-</span>
+            <input type="number" id="mergesRankMax" placeholder="最大值">
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-info" id="mergesTableInfo">显示 0 条合并规则</div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th data-msort="rank">优先级 <span class="sort-arrow">↕</span></th>
+                  <th data-msort="left">左侧（原始） <span class="sort-arrow">↕</span></th>
+                  <th data-msort="right">右侧（原始） <span class="sort-arrow">↕</span></th>
+                  <th>+</th>
+                  <th data-msort="decodedLeft">左侧（解码） <span class="sort-arrow">↕</span></th>
+                  <th data-msort="decodedRight">右侧（解码） <span class="sort-arrow">↕</span></th>
+                  <th>→</th>
+                  <th data-msort="decodedMerged">合并后（解码） <span class="sort-arrow">↕</span></th>
+                  <th>结果 ID</th>
+                </tr>
+              </thead>
+              <tbody id="mergesTableBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="page-info" id="mergesPageInfo">第 1 页，共 1 页</div>
+            <div class="pagination__actions">
+              <select class="page-size-select" id="mergesPageSizeSelect">
+                <option value="50">50 条 / 页</option>
+                <option value="100" selected>100 条 / 页</option>
+                <option value="500">500 条 / 页</option>
+                <option value="1000">1000 条 / 页</option>
+                <option value="inf">无限滚动</option>
+              </select>
+              <div class="page-controls" id="mergesPageControls"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-state" id="mergesEmptyState" style="display:none">
+          <div class="state-card state-card--compact">
+            <div class="empty-icon"><i class="fa-solid fa-link-slash" aria-hidden="true"></i></div>
+            <h2>未找到合并规则</h2>
+            <p>这个 tokenizer 文件不包含 BPE 合并规则。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script data-pjax src="../static/tokenizer-viewer/app.js"></script>

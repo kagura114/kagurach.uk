@@ -18,6 +18,8 @@ navbar:
           url: qsl/
         - name: Kagura DNS
           url: kagura-dns/
+        - name: Tokenizer Viewer
+          url: tokenizer-viewer/
         - name: Kagura Git
           url: https://git.kagurach.uk/
     # - name: 暗黑模式
