@@ -482,23 +482,39 @@ function processTokenizer(data) {
   filteredTokens = [...allTokens];
 
   // Parse model.merges
+  // Supports both formats:
+  //   - String format (GPT-2/LLaMA style): ["Ġ t", "e r", ...]
+  //   - Array format (GLM/some newer models): [["Ġ", "t"], ["e", "r"], ...]
   allMerges = [];
   if (data.model && data.model.merges && Array.isArray(data.model.merges)) {
     for (let i = 0; i < data.model.merges.length; i++) {
-      const parts = data.model.merges[i].split(' ');
-      if (parts.length >= 2) {
-        const left = parts[0];
-        const right = parts.slice(1).join(' '); // handle edge case of space token
-        const merged = left + right;
-        const { decodedLeft, decodedRight, decodedMerged } = decodeMergePair(left, right);
-        const resultId = vocabIdMap[merged] !== undefined ? vocabIdMap[merged] : null;
-        allMerges.push({
-          rank: i + 1,
-          left, right, merged,
-          decodedLeft, decodedRight, decodedMerged,
-          resultId
-        });
+      const entry = data.model.merges[i];
+      let left, right;
+
+      if (typeof entry === 'string') {
+        // Standard string format: "tokenA tokenB"
+        const parts = entry.split(' ');
+        if (parts.length < 2) continue;
+        left = parts[0];
+        right = parts.slice(1).join(' '); // handle edge case of space token
+      } else if (Array.isArray(entry) && entry.length >= 2) {
+        // Array format: ["tokenA", "tokenB"]
+        left = entry[0];
+        right = entry[1];
+      } else {
+        // Unknown format, skip
+        continue;
       }
+
+      const merged = left + right;
+      const { decodedLeft, decodedRight, decodedMerged } = decodeMergePair(left, right);
+      const resultId = vocabIdMap[merged] !== undefined ? vocabIdMap[merged] : null;
+      allMerges.push({
+        rank: i + 1,
+        left, right, merged,
+        decodedLeft, decodedRight, decodedMerged,
+        resultId
+      });
     }
   }
   filteredMerges = [...allMerges];
