@@ -7,3 +7,5 @@ public/
 .deploy*/
 _multiconfig.yml
 .vscode/
+tiktoken-wasm/target/
+tiktoken-wasm/.src_hash

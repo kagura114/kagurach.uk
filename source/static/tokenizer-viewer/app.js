@@ -33,6 +33,11 @@ let infiniteMergesLoaded = 0;
 let mergesSortField = 'rank';
 let mergesSortDir = 'asc';
 
+// Tiktoken WASM state
+let wasmModule = null;
+let wasmReady = false;
+let currentFormat = null; // 'huggingface' | 'tiktoken'
+
 // ============ GPT-2 BYTE-LEVEL BPE DECODER ============
 // GPT-2 uses a byte-to-unicode mapping for its BPE tokens.
 // Characters like Ġ (U+0120) = space (0x20), Ċ (U+010A) = newline (0x0A), etc.
@@ -403,13 +408,20 @@ document.querySelectorAll('.btn-preset[data-url]').forEach(btn => {
 function loadFile(file) {
   showLoading();
   const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      processTokenizer(data);
-    } catch (err) {
-      showToast('解析 JSON 失败：' + err.message, 'error');
-      hideLoading();
+  reader.onload = async (e) => {
+    const text = e.target.result;
+    const fileName = file.name.toLowerCase();
+
+    if (fileName.endsWith('.model') || fileName.endsWith('.tiktoken')) {
+      await processTiktokenModel(text);
+    } else {
+      try {
+        const data = JSON.parse(text);
+        processTokenizer(data);
+      } catch (err) {
+        showToast('解析 JSON 失败：' + err.message, 'error');
+        hideLoading();
+      }
     }
   };
   reader.readAsText(file);
@@ -420,16 +432,90 @@ async function loadFromUrl(url) {
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-    const data = await res.json();
-    processTokenizer(data);
+
+    // Detect format by URL extension
+    const isTiktoken = url.endsWith('.model') || url.endsWith('.tiktoken');
+
+    if (isTiktoken) {
+      const text = await res.text();
+      await processTiktokenModel(text);
+    } else {
+      const data = await res.json();
+      processTokenizer(data);
+    }
   } catch (err) {
     showToast('获取失败：' + err.message, 'error');
     hideLoading();
   }
 }
 
+// ============ TIKTOKEN WASM ============
+async function loadWasmModule() {
+  if (wasmModule) return wasmModule;
+  const mod = await import('./wasm/tiktoken_wasm.js');
+  await mod.default();
+  wasmModule = mod;
+  wasmReady = true;
+  return mod;
+}
+
+async function processTiktokenModel(text) {
+  try {
+    const wasm = await loadWasmModule();
+    wasm.load_model(text);
+    currentFormat = 'tiktoken';
+
+    // Get vocab from WASM as JSON
+    const vocabJson = wasm.get_vocab_json();
+    const vocab = JSON.parse(vocabJson);
+
+    // Populate allTokens using the same structure
+    allTokens = [];
+    vocabIdMap = {};
+    decodedVocabIdMap = {};
+
+    for (const entry of vocab) {
+      const bytes = new Uint8Array(entry.bytes);
+      const decoded = decodeBytesForDisplay(bytes);
+      const token = entry.text;
+      const id = entry.id;
+
+      allTokens.push({
+        token,
+        decoded,
+        id,
+        type: 'normal',
+        length: decoded.length
+      });
+      vocabIdMap[token] = id;
+      decodedVocabIdMap[decoded] = id;
+    }
+
+    // Sort by ID
+    allTokens.sort((a, b) => a.id - b.id);
+    filteredTokens = [...allTokens];
+
+    // Tiktoken has no explicit merge rules
+    allMerges = [];
+    filteredMerges = [];
+    mergesBadge.classList.add('hidden');
+
+    hideLoading();
+    showContent();
+    updateStats();
+    renderCharts();
+    applyFilters();
+    applyMergesFilters();
+    showToast(`已加载 tiktoken 模型：${allTokens.length.toLocaleString()} 个词元`, 'success');
+  } catch (err) {
+    showToast('加载 tiktoken 模型失败：' + err.message, 'error');
+    hideLoading();
+  }
+}
+
 // ============ PARSER ============
 function processTokenizer(data) {
+  currentFormat = 'huggingface';
   allTokens = [];
   vocabIdMap = {};
   decodedVocabIdMap = {};
@@ -1129,4 +1215,134 @@ function escapeHtml(str) {
 
 function escapeJs(str) {
   return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+}
+
+// ============ TOKENIZE TEXT ============
+const tokenizeInput = document.getElementById('tokenizeInput');
+const tokenizeBtn = document.getElementById('tokenizeBtn');
+const tokenizeOutput = document.getElementById('tokenizeOutput');
+const tokenizeStats = document.getElementById('tokenizeStats');
+
+const TOKEN_COLORS = [
+  'rgba(26, 163, 190, 0.18)',
+  'rgba(242, 166, 90, 0.22)',
+  'rgba(47, 154, 104, 0.18)',
+  'rgba(203, 97, 86, 0.16)',
+  'rgba(108, 174, 215, 0.22)',
+  'rgba(191, 137, 39, 0.20)',
+  'rgba(156, 120, 200, 0.18)',
+  'rgba(80, 180, 160, 0.20)',
+  'rgba(220, 120, 60, 0.18)',
+  'rgba(100, 140, 200, 0.22)',
+  'rgba(180, 90, 150, 0.18)',
+  'rgba(60, 180, 120, 0.20)',
+  'rgba(200, 160, 50, 0.20)',
+  'rgba(120, 100, 180, 0.18)',
+  'rgba(50, 160, 180, 0.20)'
+];
+
+if (tokenizeBtn) {
+  tokenizeBtn.addEventListener('click', handleTokenize);
+}
+if (tokenizeInput) {
+  tokenizeInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.ctrlKey) handleTokenize();
+  });
+}
+
+async function handleTokenize() {
+  const text = tokenizeInput.value;
+  if (!text) {
+    tokenizeOutput.innerHTML = '<span class="tokenize-placeholder">请在上方输入文本...</span>';
+    tokenizeStats.textContent = '';
+    return;
+  }
+
+  if (currentFormat === 'tiktoken' && wasmReady) {
+    const spansJson = wasmModule.encode_with_spans(text);
+    const spans = JSON.parse(spansJson);
+    renderTokenSpans(spans);
+  } else if (currentFormat === 'huggingface' && allMerges.length > 0) {
+    const spans = encodeWithMergesJS(text);
+    renderTokenSpans(spans);
+  } else {
+    tokenizeOutput.innerHTML = '<span class="tokenize-placeholder">请先加载一个 tokenizer 文件</span>';
+  }
+}
+
+function renderTokenSpans(spans) {
+  if (spans.length === 0) {
+    tokenizeOutput.innerHTML = '<span class="tokenize-placeholder">（空结果）</span>';
+    tokenizeStats.textContent = '';
+    return;
+  }
+
+  let html = '';
+  for (let i = 0; i < spans.length; i++) {
+    const span = spans[i];
+    const color = TOKEN_COLORS[i % TOKEN_COLORS.length];
+    const bytes = span.bytes instanceof Array ? new Uint8Array(span.bytes) : span.bytes;
+    const displayText = decodeBytesForDisplay(bytes);
+    const escapedDisplay = escapeHtml(displayText);
+    const bytesHex = Array.from(bytes).map(b => '0x' + byteHex(b)).join(' ');
+    html += `<span class="token-span" style="background:${color}" title="ID: ${span.id} | Bytes: ${bytesHex}">${escapedDisplay}<sub class="token-id-sub">${span.id}</sub></span>`;
+  }
+
+  tokenizeOutput.innerHTML = html;
+  const inputBytes = new TextEncoder().encode(tokenizeInput.value).length;
+  tokenizeStats.textContent = `${spans.length} 个 token | ${inputBytes} bytes`;
+}
+
+// JS-based BPE encoder for HuggingFace format (using merge rules)
+function encodeWithMergesJS(text) {
+  // Build merge priority map
+  const mergePriority = new Map();
+  for (const m of allMerges) {
+    mergePriority.set(m.left + ' ' + m.right, m.rank);
+  }
+
+  // Build byte-to-unicode map (inverse of UNICODE_TO_BYTE)
+  const BYTE_TO_UNICODE = {};
+  for (const [uchar, byteVal] of Object.entries(UNICODE_TO_BYTE)) {
+    BYTE_TO_UNICODE[byteVal] = uchar;
+  }
+
+  // Convert text bytes to GPT-2 unicode representation
+  const textBytes = new TextEncoder().encode(text);
+  let pieces = Array.from(textBytes).map(b => BYTE_TO_UNICODE[b] || String.fromCharCode(b));
+
+  // Merge loop: find lowest-rank adjacent pair and merge
+  while (pieces.length >= 2) {
+    let bestRank = Infinity;
+    let bestIdx = -1;
+
+    for (let i = 0; i < pieces.length - 1; i++) {
+      const key = pieces[i] + ' ' + pieces[i + 1];
+      const rank = mergePriority.get(key);
+      if (rank !== undefined && rank < bestRank) {
+        bestRank = rank;
+        bestIdx = i;
+      }
+    }
+
+    if (bestIdx === -1) break;
+    pieces.splice(bestIdx, 2, pieces[bestIdx] + pieces[bestIdx + 1]);
+  }
+
+  // Convert pieces to spans
+  const spans = [];
+  let byteOffset = 0;
+  for (const piece of pieces) {
+    const id = vocabIdMap[piece] !== undefined ? vocabIdMap[piece] : -1;
+    const bytes = tokenToBytes(piece) || new TextEncoder().encode(piece);
+    spans.push({
+      id,
+      bytes: Array.from(bytes),
+      text: piece,
+      start: byteOffset,
+      end: byteOffset + bytes.length
+    });
+    byteOffset += bytes.length;
+  }
+  return spans;
 }

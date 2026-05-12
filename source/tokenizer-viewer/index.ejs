@@ -1,7 +1,7 @@
 ---
 title: Tokenizer 可视化
-seo_title: Tokenizer 词表 ID 可视化
-description: 加载 HuggingFace tokenizer.json，查看词元与 ID 映射、BPE 合并规则和统计信息
+seo_title: Tokenizer 词表 ID 可视化 - 支持 HuggingFace 和 tiktoken
+description: 加载 HuggingFace tokenizer.json 或 tiktoken .model 文件，查看词元与 ID 映射、BPE 合并规则和统计信息
 layout: docs
 top_meta: false
 bottom_meta: false
@@ -19,7 +19,7 @@ comments: false
       <div class="tokenizer-viewer__hero-copy">
         <p class="tokenizer-viewer__eyebrow">Tokenizer 检视器</p>
         <h1>Tokenizer 词表 ID 可视化</h1>
-        <p class="tokenizer-viewer__lead">加载 HuggingFace <code>tokenizer.json</code>，在一个更清爽的界面里查看词表 ID、解码结果、合并规则和分布图表。</p>
+        <p class="tokenizer-viewer__lead">加载 HuggingFace <code>tokenizer.json</code> 或 tiktoken <code>.model</code> 文件，在一个更清爽的界面里查看词表 ID、解码结果、合并规则和分布图表。</p>
       </div>
       <div class="tokenizer-viewer__hero-meta">
         <div class="tokenizer-viewer__hero-badge">
@@ -45,9 +45,9 @@ comments: false
       <div class="load-section">
         <div class="drop-zone" id="dropZone">
           <div class="drop-zone-icon"><i class="fa-regular fa-folder-open" aria-hidden="true"></i></div>
-          <div class="drop-zone-title">将 <code>tokenizer.json</code> 拖到这里</div>
-          <div class="drop-zone-text">或者点击从本机选择文件</div>
-          <input type="file" id="fileInput" accept=".json" hidden>
+          <div class="drop-zone-title">将 <code>tokenizer.json</code> 或 <code>.model</code> 拖到这里</div>
+          <div class="drop-zone-text">支持 HuggingFace tokenizer.json 和 tiktoken .model 格式</div>
+          <input type="file" id="fileInput" accept=".json,.model,.tiktoken" hidden>
         </div>
 
         <div class="url-input-group">
@@ -59,6 +59,7 @@ comments: false
             <button class="btn-preset" data-url="https://huggingface.co/zai-org/GLM-5.1/resolve/main/tokenizer.json">Z.ai GLM 5.1</button>
             <button class="btn-preset" data-url="https://huggingface.co/google/gemma-4-31B-it/resolve/main/tokenizer.json">Gemma 4 31B IT</button>
             <button class="btn-preset" data-url="https://huggingface.co/Qwen/Qwen3.6-35B-A3B/resolve/main/tokenizer.json">Qwen 3.6 35B A3B</button>
+            <button class="btn-preset" data-url="https://huggingface.co/moonshotai/Kimi-K2.6/resolve/main/tiktoken.model">Kimi K2.6 (tiktoken)</button>
           </div>
           <label class="tokenizer-viewer__field">
             <span class="tokenizer-viewer__field-label"><i class="fa-solid fa-link" aria-hidden="true"></i>远程地址</span>
@@ -141,6 +142,7 @@ comments: false
       <div class="tabs">
         <button class="tab active" data-tab="vocab">词表表格</button>
         <button class="tab" data-tab="merges">合并规则 <span class="tab-badge hidden" id="mergesBadge">0</span></button>
+        <button class="tab" data-tab="tokenize">分词测试</button>
       </div>
 
       <div class="tab-content active" id="tabVocab">
@@ -286,6 +288,27 @@ comments: false
             <div class="empty-icon"><i class="fa-solid fa-link-slash" aria-hidden="true"></i></div>
             <h2>未找到合并规则</h2>
             <p>这个 tokenizer 文件不包含 BPE 合并规则。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tabTokenize">
+        <div class="tokenize-section">
+          <div class="tokenize-description">
+            <p>输入任意文本，查看分词结果。每个 token 会以不同颜色高亮显示，下标为其 ID。</p>
+          </div>
+          <div class="tokenize-input-area">
+            <textarea id="tokenizeInput" class="tokenize-textarea" placeholder="在这里输入文本，按下方按钮或 Ctrl+Enter 查看分词结果..." rows="4"></textarea>
+            <div class="tokenize-actions">
+              <button class="btn btn-primary" id="tokenizeBtn">
+                <i class="fa-solid fa-scissors" aria-hidden="true"></i>
+                <span>分词</span>
+              </button>
+              <span class="tokenize-stats" id="tokenizeStats"></span>
+            </div>
+          </div>
+          <div class="tokenize-output" id="tokenizeOutput">
+            <span class="tokenize-placeholder">请先输入文本，然后点击「分词」按钮</span>
           </div>
         </div>
       </div>

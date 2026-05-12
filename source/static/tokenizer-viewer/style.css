@@ -1202,3 +1202,107 @@ tbody td {
     justify-content: center;
   }
 }
+
+/* ============ TOKENIZE TEXT TAB ============ */
+.tokenize-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.tokenize-description {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--tv-border);
+  border-radius: 22px;
+  background: var(--tv-surface);
+  box-shadow: var(--tv-shadow-soft);
+  backdrop-filter: blur(12px);
+  color: var(--tv-text-soft);
+  font-size: 0.93rem;
+  line-height: 1.7;
+}
+
+.tokenize-input-area {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tokenize-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 1rem;
+  border: 1.5px solid var(--tv-border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--tv-text);
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tokenize-textarea:focus {
+  border-color: var(--tv-accent);
+  box-shadow: 0 0 0 4px rgba(26, 163, 190, 0.12);
+}
+
+.tokenize-textarea::placeholder {
+  color: #97afbf;
+}
+
+.tokenize-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tokenize-stats {
+  color: var(--tv-text-soft);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.tokenize-output {
+  min-height: 80px;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--tv-border);
+  border-radius: 22px;
+  background: var(--tv-surface);
+  box-shadow: var(--tv-shadow-soft);
+  backdrop-filter: blur(12px);
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.92rem;
+  line-height: 2.2;
+  word-break: break-word;
+}
+
+.tokenize-placeholder {
+  color: var(--tv-text-soft);
+  font-style: italic;
+}
+
+.token-span {
+  display: inline;
+  position: relative;
+  padding: 0.18rem 0.32rem;
+  margin: 0.12rem 0.08rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  cursor: default;
+  transition: box-shadow 0.15s ease;
+  white-space: pre-wrap;
+}
+
+.token-span:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  z-index: 1;
+}
+
+.token-id-sub {
+  font-size: 0.62em;
+  color: var(--tv-text-soft);
+  vertical-align: sub;
+  margin-left: 0.15em;
+  opacity: 0.7;
+}
